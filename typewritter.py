@@ -58,22 +58,17 @@ def get_alphabet():
     Returns:
         str: A string of characters allowed for random generation.
     """
-    # Start with lowercase always
     alphabet = string.ascii_lowercase
 
-    # Add uppercase letters only if capitalization is kept
     if not REMOVE_CAPITALIZATION:
         alphabet += string.ascii_uppercase
 
-    # Add punctuation if allowed
     if not REMOVE_PUNCTUATION:
         alphabet += string.punctuation
 
-    # Add spaces if allowed
     if not REMOVE_SPACES:
         alphabet += " "
 
-    # Add newlines/tabs if formatting is preserved
     if not REMOVE_FORMATTING:
         alphabet += "\n\t"
 
@@ -133,3 +128,4 @@ if __name__ == "__main__":
     text_to_type = read_text_file('shakespeare')
     clean_text = format_text(text_to_type)
     run_typewriter(clean_text)
+    
