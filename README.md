@@ -32,8 +32,8 @@ This creates a tension between:
 
 ## 🧠 Why It Matters
 
-- **Probability vs Reality**: It illustrates the difference between mathematical outcomes and real-world feasibility.
-- **Randomness & Order**: Shows how random processes can still produce order—given enough time.
+- **Probability vs Reality**: It illustrates the difference between mathematical outcomes and real, world feasibility.
+- **Randomness & Order**: Shows how random processes can still produce order; given enough time.
 - **Limits of Computation**: Helps explain why brute-force methods are impractical for solving complex problems, even if technically feasible.
 
 ---
