@@ -4,11 +4,12 @@ import random
 import time
 from multiprocessing import Process, Manager
 
+# Configuration flags
 REMOVE_FORMATTING = True
 REMOVE_PUNCTUATION = True
 REMOVE_SPACES = True
 REMOVE_CAPITALIZATION = True
-NUMBER_OF_MONKEYS = 4
+NUMBER_OF_MONKEYS = 5
 
 
 def read_text_file(file_name):
@@ -81,17 +82,16 @@ def get_alphabet():
     return alphabet
 
 
-
-def run_typewriter(text, monkey_id, winner_flag):
+def run_typewriter(text, monkey_id, winner_flag, checkpoint_interval=100000):
     """
-    Each monkey types randomly until:
-        - It finishes the text (and becomes the winner)
-        - Or another monkey has already finished (winner_flag set)
+    Simulate a monkey typing random characters until it matches the given text or another
+    monkey wins first. Each monkey prints its own progress at checkpoints.
 
     Args:
-        text (str): Cleaned text to type.
-        monkey_id (int): Monkey's unique identifier.
-        winner_flag (Namespace): Shared flag to signal a winner.
+        text (str): The target text to match.
+        monkey_id (int): The unique identifier for this monkey.
+        winner_flag (Namespace): Shared flag to signal when a winner has been found.
+        checkpoint_interval (int): How many key presses between progress checkpoints.
     """
     alphabet = get_alphabet()
     attempt_index = 0
@@ -101,7 +101,7 @@ def run_typewriter(text, monkey_id, winner_flag):
     best_attempt_presses = 0
 
     while attempt_index < len(text):
-        # Check if someone else already won
+        # Stop if another monkey already won
         if winner_flag.winner is not None:
             print(f"[Monkey {monkey_id}] stops, Monkey {winner_flag.winner} already won!")
             return
@@ -109,6 +109,7 @@ def run_typewriter(text, monkey_id, winner_flag):
         key_presses += 1
         char = random.choice(alphabet)
 
+        # Character match check
         if char == text[attempt_index]:
             attempt_string += char
             attempt_index += 1
@@ -116,13 +117,16 @@ def run_typewriter(text, monkey_id, winner_flag):
             if len(attempt_string) > len(best_attempt):
                 best_attempt = attempt_string
                 best_attempt_presses = key_presses
-                print(f"[Monkey {monkey_id}] New best attempt "
-                      f"({len(best_attempt)}/{len(text)}): "
-                      f"'{best_attempt}' at trial #{best_attempt_presses}")
             attempt_index = 0
             attempt_string = ""
 
-    # If we get here, this monkey finished first
+        # Checkpoint printing (each monkey reports its own progress)
+        if key_presses % checkpoint_interval == 0:
+            print(f"[Monkey {monkey_id}] checkpoint at {key_presses} presses | "
+                  f"Best guess so far: '{best_attempt}' "
+                  f"({len(best_attempt)}/{len(text)})")
+
+    # Monkey wins
     winner_flag.winner = monkey_id
     print(f"\n[Monkey {monkey_id}] 🎉 WINS after {key_presses} key presses! 🎉")
     print(f"[Monkey {monkey_id}] Final match: {attempt_string}")
@@ -146,6 +150,7 @@ def run_multiple_monkeys(text, number_of_monkeys):
     Behavior:
         - Spawns `number_of_monkeys` processes, each running `run_typewriter()`.
         - Uses a shared flag (`winner_flag`) to signal when a monkey finishes.
+        - Uses a shared dictionary (`shared_best`) to track and display the globally best partial attempt.
         - Stops all other monkeys as soon as one completes the task.
         - Prints progress updates and declares the winning monkey.
 
@@ -168,7 +173,9 @@ def run_multiple_monkeys(text, number_of_monkeys):
         print(f"\nThe winner is Monkey {winner_flag.winner}! 🏆")
 
 
+
 if __name__ == "__main__":
     text_to_type = read_text_file('shakespeare')
     clean_text = format_text(text_to_type)
     run_multiple_monkeys(clean_text, NUMBER_OF_MONKEYS)
+
