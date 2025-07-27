@@ -13,7 +13,7 @@ This idea is often cited in discussions about randomness, probability, infinity,
 ## 🛠️ Local Setup
 1. Clone the repo.
 2. Navigate to the directory via the command line.
-3. 'python typewritter.py' (This accepts defaults as defined in the variables at the top of the file.)
+3. `python typewritter.py` (This accepts defaults as defined in the variables at the top of the file.)
 
 Note: The program will run until a successful trial.
 
